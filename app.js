@@ -28,6 +28,13 @@ app.get('/payment',function(req,res){
 		var id = rows[0].merchant_uid;
 		var name = rows[0].name;
 		var amount = rows[0].amount;
+		res.render(__dirname+'/public/payment_button.html',{
+		    //res.sendFile(__dirname+'/public/payment_button.html',{
+		    //res.render('test',{
+			'id' : id,
+			'name' : name,
+			'amount' : amount
+		})
 	});
 	connection.end();
 });
