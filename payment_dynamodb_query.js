@@ -1,19 +1,21 @@
 module.exports.send = function (i){
-  var AWS = require("aws-sdk");
-  var docClient = new AWS.DynamoDB.DocumentClient();
+  var AWS = require('aws-sdk');
+  var dynamodb = new AWS.DynamoDB({ region: 'us-east-1' });
+  var docClient = new AWS.DynamoDB.DocumentClient({ service: dynamodb });
+
   AWS.config.update({
     region: "us-east-1",
   });
 
   var params = {
-      TableName : "PaymentTestTable_JW",
-      ProjectionExpression:"#id, total_amount, buyer_tel, market_name, required_time",
-      KeyConditionExpression: "#id = :num", //id로 쿼리할꺼야
+      TableName : "OrderList",
+      ProjectionExpression:"#id, orderInfo",
+      KeyConditionExpression: "#id = :i", //id로 쿼리할꺼야
       ExpressionAttributeNames:{
-          "#id": "merchant_uid",            //겹치는값 별명지어주는듯 year같은거
+          "#id": "merchant_uid",  
       },
       ExpressionAttributeValues: {
-          ":num": i                         //app.js에서 넘어온 id값으로 쿼리
+          ":i": i                         //app.js에서 넘어온 id값으로 쿼리
       }
   };
 
@@ -23,11 +25,22 @@ module.exports.send = function (i){
       } else {
           console.log("Query succeeded.");
           data.Items.forEach(function(item) {
-            exports.merchant_uid = item.merchant_uid;  //exports로 값 넘겨주기
-            exports.total_amount = item.total_amount;
-            exports.buyer_tel = item.buyer_tel;
-            exports.market_name = item.market_name;
-            exports.required_time = item.required_time;
+            exports.id = item.id;  //exports로 값 넘겨주기
+            exports.paymentNum = item.orderInfo[0].paymentNum;
+            exports.totPrice = item.orderInfo[0].totPrice;
+
+            var obj = item.orderInfo[0].order;
+            var obj_length = Object.keys(obj).length;
+            console.log(obj_length);
+
+            exports.menu = item.orderInfo[0].order[0].menu;
+            exports.amount = item.orderInfo[0].order[0].amount;
+            exports.price = item.orderInfo[0].order[0].price;
+            exports.shot = item.orderInfo[0].order[0].shot;
+            exports.size = item.orderInfo[0].order[0].size;
+            exports.size = item.orderInfo[0].order[0].date;
+            exports.size = item.orderInfo[0].order[0].time;
+            exports.size = item.orderInfo[0].order[0].type;
           });
       }
   });
