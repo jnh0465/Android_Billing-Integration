@@ -17,27 +17,35 @@ app.set('views', __dirname+'/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
+var id="ABC";    							     // 여기서 해도됨 id값으로 dynamodb 쿼리
+
 app.get('/payment',function(req,res){				
-	var id=15347716504970820;					     // 일단 주문번호(id)로 dynamodb 쿼리
-	dynamodb.send(i);						     // to dynamodb_query.js
+	//var id=15347716504970820;					     // id값으로 dynamodb 쿼리
+	dynamodb.send(id);						     // to dynamodb_query.js
 
-	setTimeout(function() {						     // 쿼리 할 시간 확보 위해 1초정도 지연함. 효과가 있는지는 의문
-		var id = dynamodb.merchant_uid;				     // 퀴리된 값 가져와서 각 변수에 저장
-		var tamount = dynamodb.total_amount;
-		var tel = dynamodb.buyer_tel;
-		var name = dynamodb.market_name;
-		var time = dynamodb.required_time;
-		//console.log(id+name+amount+tel);
-
+	setTimeout(function() {				// 쿼리 할 시간 확보 위해 1초정도 지연함. 효과있음! 새로고침 한 번 덜 하게해줌
 		res.render(__dirname+'/public/payment_button.html',{         // to payment_button.html
-		//res.sendFile(__dirname+'/public/payment_button.html',{
-		//res.render('test',{
-			'merchant_uid' : id,
-			'total_amount' : tamount,
-			'buyer_tel' : tel,
-			'market_name' : name,
-			'required_time' : time
+			'id' : dynamodb.id,
+			'merchant_uid' : dynamodb.paymentNum,
+			'totPrice' : dynamodb.totPrice,
+			'menu' : dynamodb.menu,
+			'amount' : dynamodb.amount,
+			'price' : dynamodb.price
 		})
+	}, 1000);
+});
+
+app.get('/payment_complete',function(req,res){					
+	dynamodb.send(i);
+	setTimeout(function() {
+		res.render(__dirname+'/public/payment_complete.html',{
+			'id' : dynamodb.id,
+			'merchant_uid' : dynamodb.paymentNum,
+			'totPrice' : dynamodb.totPrice,
+			'menu' : dynamodb.menu,
+			'amount' : dynamodb.amount,
+			'price' : dynamodb.price
+		});
 	}, 1000);
 });
 
