@@ -38,7 +38,10 @@
             buyer_tel : '',
             buyer_addr : '',
             buyer_postcode : '',
-            app_scheme : 'iamportapp'
+            app_scheme : 'iamportapp',
+            m_redirect_url : 'http://192.168.:3000/payment_complete', //####################url바뀌면 잘 바꿔줘야함 `
+                                                                      // 결제 완료 후 넘어갈 페이지 url
+
         }, function(rsp) {
             if ( rsp.success ) {
                 var msg = '결제가 완료되었습니다.';
