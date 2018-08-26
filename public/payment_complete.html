@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+      <div id="container">
+          <div class="payment" id="block" style="border: 3px solid gray; margin: auto; width: 370px; height: 650px;">
+            <h1 style="text-align:center">주문이 정상적으로<br><span style="color:green">완료</span>되었습니다.</h1>
+            <hr>
+            <h3><br>
+              주문번호 : <%= merchant_uid%><br>
+              결제금액 : <%= totPrice%><br><br>
+              주문내역 : <br><%= menu%> <%= amount%> <%= price%><br><br>
+              매장명 : <br>
+              매장이름 : <br>
+              예상소요시간 : <br>
+            </h3>
+          </div>
+      <div>
+  </body>
+</html>
