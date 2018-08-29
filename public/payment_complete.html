@@ -3,21 +3,111 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
   </head>
+  <style>
+    h1, h3, h4, h5,h6{
+      text-align:center;
+    }
+    .tab {
+       margin-left: 130px;
+     }
+  </style>
   <body>
-      <div id="container">
-          <div class="payment" id="block" style="border: 3px solid gray; margin: auto; width: 370px; height: 650px;">
-            <h1 style="text-align:center">주문이 정상적으로<br><span style="color:green">완료</span>되었습니다.</h1>
-            <hr>
-            <h3><br>
-              주문번호 : <%= merchant_uid%><br>
-              결제금액 : <%= totPrice%><br><br>
-              주문내역 : <br><%= menu%> <%= amount%> <%= price%><br><br>
-              매장명 : <br>
-              매장이름 : <br>
-              예상소요시간 : <br>
-            </h3>
-          </div>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+
       <div>
+        <br>
+        <h1>주문이 정상적으로<br><span style="color:green">완료</span>되었습니다.</h1>
+        <hr>
+          <h5>
+            주문번호 : <%= merchant_uid%>
+            <script>
+              function relocate_home(){
+                   location.href = "http://192.168.:3000/payment_list";
+              }
+            </script>
+            <span class="tab"><button type="button" class="btn btn-sm" onclick=" relocate_home()">구매내역보기</button> <br></span>
+          </h5>
+        <hr>
+        <h5>
+          <h4>
+
+            <button type="button" class="btn" id="state1">주문접수중</button>
+            <button type="button" class="btn" id="state2">제조중</button>
+            <button type="button" class="btn" id="state3">제조완료</button>
+            <button type="button" class="btn" id="state4">수령완료</button><br>
+
+          </h4>
+
+              <script type="text/javascript" >
+               var state = "<%= state%>";                    //state값을 받아와서 버튼의 상태를 바꿔보고 싶어서 일단 클릭시 바꾸는걸 해봄
+               document.write(state);
+               if(state=1){
+                 document.write(1);
+               }
+
+               $(document).ready(function() {
+
+                   $("#state1").click(function () {
+
+                       if ($(this).hasClass('btn')){
+                           $('#state1').removeClass('btn').addClass('btn-success');
+                           $(this).addClass('btn-success').removeClass('btn');
+                       }
+
+                       else if ($(this).hasClass('btn-success')){
+                           $('#state1').removeClass('btn-success').addClass('btn');
+                           $(this).addClass('btn').removeClass('btn-success');
+                       }
+
+                   })
+               })
+              </script>
+
+            <h6>예상소요시간 : <%= required_time%>분<br>
+            <%= market_name%> <%= market_tel%></h6><hr>
+
+          <div class="container">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>메뉴</th>
+                  <th>수량</th>
+                  <th>가격</th>
+                </tr>
+              </thead>
+
+              <script type="text/javascript" >
+                var obj_length = "<%= obj_length%>";
+
+                var menu_array = "<%= menu%>";              //app.js에서 string으로 받아와
+                var menu_split = menu_array.split(',');     // ,로 하나하나 나눈다음 menu_split에 저장함 
+
+                var amount_array = "<%= amount%>";
+                var amount_split = amount_array.split(',');
+
+                var price_array = "<%= price%>";
+                var price_split = price_array.split(',');
+
+                for(i=0; i<obj_length; i++){
+                  document.write("<tr>");
+                  document.write("<td>"+menu_split[i]+"</td>");
+                  document.write("<td>"+amount_split[i]+"</td>");
+                  document.write("<td>"+price_split[i]+"</td>");
+                  document.write("</tr>");
+                }
+                document.write("<tr>");
+                document.write("<td>"+"</td>"+"<td>"+"</td>"+"<td>"+"<%= totPrice%>"+"</td>");
+                document.write("</tr>");
+
+              </script>
+            </table>
+          </div>
+        </h5>
+          <br><br>
+        <h5><button type="button" class="btn btn-success btn-lg" >홈화면으로 돌아가기</button><br><br><br></h5>
+      
   </body>
 </html>
