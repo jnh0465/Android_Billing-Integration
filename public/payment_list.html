@@ -1,4 +1,4 @@
-<!-- 결제 리스트 화면 -->
+<!-- 결제완료화면에서 구매내역보기 버튼 누르면 넘어가는 리스트 화면 -->
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -10,21 +10,12 @@
   </head>
 
   <style>
-    h1, h3, h4, h5,h6{
-      text-align:center;
-    }
-    .tab {
-       margin-left: 130px;
-     }
+    h5{  text-align:center;}
   </style>
 
   <body>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
-
-      <div>
-        <br>
-        <h5>
-
+      <div><br><h5>
           <div class="container">
             <table class="table table-striped">
               <thead>
@@ -38,10 +29,10 @@
               <script type="text/javascript" >
                 var obj_orderInfo_length = "<%= obj_orderInfo_length%>"; // 역대 주문수 / orderInfo[n]에서의 n
 
-                var obj_length = "<%= obj_length%>";      // obj_orderInfo_length별 주문한 메뉴개수 / orderInfo[n].order[m]에서의 m
+                var obj_length = "<%= obj_length%>";      // 주문수별 주문한 메뉴개수 / orderInfo[n].order[m]에서의 m
                 var obj_length_split = obj_length.split(',');
 
-                var list_array = "<%= list%>";             // 여기서는 그냥 메뉴이름(원래는 메뉴,수량,금액,메뉴,수량,금액....)
+                var list_array = "<%= list%>";             // 메뉴
                 var list_split = list_array.split(',');
 
                 var paymentNum_array = "<%= paymentNum%>"; // 결제번호
@@ -52,40 +43,22 @@
 
                 var price_array = "<%= totPrice%>";        // 총금액
                 var price_split = price_array.split(',');
-
-                //document.write(price_split[0]);
-
-                Array.prototype.division = function(n){    // 배열을 n개씩 나눠주는 함수
-                  var arr = this;
-                  var len = arr.length;
-                  var cnt = Math.floor(len/n)+(Math.floor(len%n)>0?1:0);
-                  var tmp = [];
-                  for(var i =0; i<cnt; i++){
-                    tmp.push(arr.splice(0,n));
-                  }
-                  return tmp;
+                
+                var num_menu=0, menu_tmp=[];
+                for (var i=0; i<obj_orderInfo_length; i++){
+                  var a= Number(obj_length_split[i]);
+                  num_menu += a;
                 }
 
-                // 지금 코드에선 비효율적이긴한데 나중을 위해 남겨둠
-                  var num_menu=0;
-                  for (var i=0; i<obj_orderInfo_length; i++){
-                    var a= Number(obj_length_split[i]);
-                    num_menu += a;
-                  }
-
-                  var menu_tmp=[];
-                  var div =list_split.division(1);
-                  for(var i=0; i<num_menu; i++){
-                    menu_tmp.push(div[i]);
-                  }
-                //
+                for(var i=0; i<num_menu; i++){
+                  menu_tmp.push(menu_list_split[i]);
+                }
 
                 num_menu=0;
                 for(i=0; i<obj_orderInfo_length; i++){
                   var a= Number(obj_length_split[i]);   // 메뉴의 개수를 a에 저장하고
                   num_menu += a;                        // num_menu에 계속 쌓음
                   //document.write(a+" ");              // 1 1 1 1 1 1 2 1 2 (메뉴의 개수)
-
                   //document.write(num_menu+" ");       // 1 2 3 4 5 6 8 9 11 (11개의 메뉴가 있음을 알 수 있음)
                                                         // 바꿔생각해보면 [num_menu-1]번째(배열은 0부터 시작하니 -1해주기)의 메뉴들만 나열하면 제일 상위의 메뉴임을 알 수 있음
 
