@@ -12,9 +12,6 @@
       <p>
         <%= merchant_uid%>
         <%= total_amount%>
-        <%= buyer_tel%>
-        <%= market_name%>
-        <%= required_time%>
         <!-- 확인차 띄움-->
       </p>
     </p>
@@ -22,7 +19,7 @@
       //$('#check_module').click(function(){
       document.querySelector('.check_module').addEventListener('click', function(){
         var merchant_uid = <%= merchant_uid%>;
-        var name = "";          //문자열받아오는게 안되여...왜?
+        var name = "";
         var total_amount = <%= total_amount%>;
 
         var IMP = window.IMP;
