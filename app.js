@@ -1,13 +1,10 @@
 var express = require('express');	          //express
 var app = express();
 var bodyParser = require('body-parser');
-var fcm_push = require('./push_notification.js'); //push_notification.js 끌어오기
-							
-var AWS = require("aws-sdk");			   // --> npm install aws-sdk --save
-var dynamodb = require('./orderlist_query.js');	   	 //orderlist_query.js
-var orderlist = require('./orderlist_query_list.js');    //orderlist_query_list.js
-var market = require('./marchanttable_query.js'); 	 //marchanttable_query.js
 
+var fcm_push = require('./push_notification.js'); //push_notification.js 끌어오기
+var query = require('./query.js');	      							 //query.js
+							
 var AWS = require("aws-sdk");				 // --> npm install aws-sdk --save
 var docClient = new AWS.DynamoDB.DocumentClient();
 AWS.config.update({
@@ -24,63 +21,43 @@ app.engine('html', require('ejs').renderFile);
 var i="ABC";    							     // 여기서 해도됨 id값으로 dynamodb 쿼리
 var j="T001";		
 
+//DB Query => payment->payment_complete->payment_list
 app.get('/payment',function(req,res){				
-	dynamodb.send(i);						     // to dynamodb_query.js
-
-	setTimeout(function() {				// 쿼리 할 시간 확보 위해 1초정도 지연함. 효과있음! 새로고침 한 번 덜 하게해줌
+	query.send(i);						     // to dynamodb_query.js
+	setTimeout(function() {	
 		res.render(__dirname+'/public/payment_button.html',{         // payment_button.html로 dynamodb에서 쿼리된 값 넘기기
-			'merchant_uid' : dynamodb.paymentNum,
-			'totPrice' : dynamodb.totPrice
+			'merchant_uid' : query.paymentNum,
+			'totPrice' : query.totPrice
 		})
 	}, 1000);
 });
 
 app.get('/payment_complete',function(req,res){				    // 결제가 완료되면 redirect url로 넘어갈 html 
-	dynamodb.send(i);
-	market.send(j);
+   res.render(__dirname+'/public/payment_complete.html',{ // to payment_complete.html
+   	 'merchant_uid' : query.paymentNum,
+	 'totPrice' : query.totPrice,
+   	 'menu' : query.menu,
+	 'amount' : query.amount,
+	 'price' : query.price,
+	 'state' : query.state,
+	 'current_obj_length' : query.current_obj_length,
 
-	setTimeout(function() {
-		res.render(__dirname+'/public/payment_complete.html',{
-		        'id' : dynamodb.id,
-			'merchant_uid' : dynamodb.paymentNum,
-			'totPrice' : dynamodb.totPrice,
-			'menu' : dynamodb.menu,
-			'amount' : dynamodb.amount,
-			'price' : dynamodb.price,
-			'state' : dynamodb.state,
-			'obj_length' : dynamodb.obj_length,
-
-			'market_location' : market.location,
-			'market_name' : market.name,
-			'market_tel' : market.tel,
-			'required_time' : market.required_time
-		});
-	}, 1000);
+	 'market_location' : query.location,
+	 'market_name' : query.name,
+	 'market_tel' : query.tel,
+	 'required_time' : query.required_time
+	});
 });
 
 app.get('/payment_list',function(req,res){		
-	orderlist.send(i);								
-	market.send(j);
-
-	setTimeout(function() {
-		res.render(__dirname+'/public/payment_list.html',{
-			'MAC' : orderlist.id,
-			'paymentNum' : orderlist.paymentNum,
-			'totPrice' : orderlist.totPrice,
-			'menu' : orderlist.menu,
-			'amount' : orderlist.amount,
-			'price' : orderlist.price,
-			'date' : orderlist.date,
-			'list' : orderlist.list,
-			'obj_length' : orderlist.obj_length,
-			'obj_orderInfo_length' : orderlist.obj_orderInfo_length,
-
-			'market_location' : market.location,
-			'market_name' : market.name,
-			'market_tel' : market.tel,
-			'required_time' : market.required_time
-		});
-	}, 1000);
+   res.render(__dirname+'/public/payment_list.html',{   // to payment_list.html
+	'paymentNum' : query.paymentNum_list,
+	'totPrice' : query.totPrice_list,
+	'date' : query.date_list,
+	'menu_list' : query.menu_list,
+	'obj_length' : query.obj_length,
+	'obj_orderInfo_length' : query.obj_orderInfo_length
+	});
 });
 
 app.listen(3000, function(){
