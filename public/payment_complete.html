@@ -32,39 +32,32 @@
           </h5>
         <hr>
         <h5>
-          <h4>
+            <input type="button" value="주문접수중" id="a" class="btn" onclick="change(this)" style="background-color:whitegray;">
+            <input type="button" value="제조중" id="b" class="btn" onclick="change(this)" style="background-color:whitegray;">
+            <input type="button" value="제조완료" id="c" class="btn" onclick="change(this)" style="background-color:whitegray;">
+            <input type="button" value="수령완료" id="d" class="btn" onclick="change(this)" style="background-color:whitegray;"><br>
 
-            <button type="button" class="btn" id="state1">주문접수중</button>
-            <button type="button" class="btn" id="state2">제조중</button>
-            <button type="button" class="btn" id="state3">제조완료</button>
-            <button type="button" class="btn" id="state4">수령완료</button><br>
 
-          </h4>
+            <script language="JavaScript">
+              var state="<%= state%>";  //상태값 끌어와서 상태별 버튼색상 바꿔줌
+              //var state="4";
 
-              <script type="text/javascript" >
-               var state = "<%= state%>";                    //state값을 받아와서 버튼의 상태를 바꿔보고 싶어서 일단 클릭시 바꾸는걸 해봄
-               document.write(state);
-               if(state=1){
-                 document.write(1);
-               }
+              // 총 4단계로 주문접수중, 제조중, 제조완료, 수령완료를 1,2,3,4로 구분하게 함
+              if(state=="1"){
+                document.getElementById("a").click(); //자동클릭으로 구현
+              }else if(state=="2"){
+                document.getElementById("b").click();
+              }else if(state=="3"){
+                document.getElementById("c").click();
+              }else{
+                document.getElementById("d").click();
+              }
 
-               $(document).ready(function() {
-
-                   $("#state1").click(function () {
-
-                       if ($(this).hasClass('btn')){
-                           $('#state1').removeClass('btn').addClass('btn-success');
-                           $(this).addClass('btn-success').removeClass('btn');
-                       }
-
-                       else if ($(this).hasClass('btn-success')){
-                           $('#state1').removeClass('btn-success').addClass('btn');
-                           $(this).addClass('btn').removeClass('btn-success');
-                       }
-
-                   })
-               })
-              </script>
+              function change(obj){
+                obj.style.background = 'green';  //클릭시 녹색배경+흰색글씨
+                obj.style.color = 'white';
+              }
+            </script>
 
             <h6>예상소요시간 : <%= required_time%>분<br>
             <%= market_name%> <%= market_tel%></h6><hr>
