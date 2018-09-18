@@ -1,86 +1,91 @@
 // dynamodb DB 쿼리
 
-module.exports.send = function (i, j){
+module.exports.send = function (i,j){
   var AWS = require('aws-sdk');
   var dynamodb = new AWS.DynamoDB({ region: 'us-east-1' });
   var docClient = new AWS.DynamoDB.DocumentClient({ service: dynamodb });
 
-  var params = {
-      TableName : "OrderList",
-      ProjectionExpression:"#id, orderInfo",
-      KeyConditionExpression: "#id = :i", 
-      ExpressionAttributeNames:{
-          "#id": "merchant_uid",  
-      },
+  var OrderList_params = {
+      TableName : "OrderList",                                    //OrderList
+      ProjectionExpression:"MAC, orderInfo",
+      KeyConditionExpression: "MAC = :i",
       ExpressionAttributeValues: {
-          ":i": i   
+          ":i": i
       }
   };
 
-  var MerchantTable_params = {
-      TableName : "MerchantTable",                                //MerchantTable
-      ProjectionExpression:"merchant_code, merchantInfo",
-      KeyConditionExpression: "merchant_code = :j",
+  var Twosome_Code_params = {
+      TableName : "Twosome_Code",                                //Twosome_Code
+      ProjectionExpression:"placeId, brandName, positionName, requiredTime",
+      KeyConditionExpression: "placeId = :j",
       ExpressionAttributeValues: {
           ":j": j
       }
   };
-  
-  /* dynamodb 형식
+
+  /* dynamodb json 구조(OrderList)
   {
-  "id": "ABC",
-  "orderInfo": [
-    {
-      "order": [
-        {
-          "amount": "1",
-          "date": "2018-08-27",
-          "menu": "mocha",
-          "price": "4900",
-          "shot": null,
-          "size": null,
-          "time": "09:51",
-          "type": "eat in"
-        }
-      ],
-      "paymentNum": "ABC6",
-      "totPrice": "4900"
-    },
-    ......
-  ]
-}
+    "MAC": "",
+    "orderInfo": [
+      {
+        "brandName": "",
+        "order": [
+          {
+            "amount": "2",
+            "date": "2018-09-15",
+            "menu": "icedcafeamericano",
+            "price": "4100",
+            "shot": null,
+            "size": null,
+            "time": "09:45",
+            "type": "eat in"
+          }
+        ],
+        "paymentNum": "",
+        "placeId": "",
+        "positionName": "",
+        "state": "1",
+        "totPrice": "8200"
+      }
+    ]
+  }
   */
-  
-  docClient.query(params, function(err, data) {
+
+  docClient.query(OrderList_params, function(err, data) {
       if (err) {
-          console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
+          console.log("[orderlist] Unable to query. Error:", JSON.stringify(err, null, 2));
       } else {
-          console.log("Query succeeded.");
+          console.log("Query succeeded [orderlist]");
+
           data.Items.forEach(function(item) {
-            var orderInfo = item.orderInfo[0];          //결제는 항상 item.orderInfo[0]이니 바꿀필요없음
-            
-            exports.id = item.id; 
-            exports.paymentNum = orderInfo.paymentNum;
-            exports.totPrice = orderInfo.totPrice;
+             var orderInfo = item.orderInfo[0];                  //현재 결제는 항상 item.orderInfo[0]이니 바꿀필요없음
 
-            var obj_orderInfo = item.orderInfo;        //역대 주문개수구하기(item.orderInfo[n]의 n 구하기)
-            var obj_orderInfo_length = Object.keys(obj_orderInfo).length;
-            exports.obj_orderInfo_length = obj_orderInfo_length;
-            
-            var obj = item.orderInfo[0].order;          //현재주문의 메뉴개수구하기(item.orderInfo[0].order[n]의 n 구하기)
-            var obj_length = Object.keys(obj).length;
-            console.log(obj_length);
+             exports.id = item.MAC;                              //MAC주소
+             exports.paymentNum = orderInfo.paymentNum;          //결제번호
+             exports.totPrice = orderInfo.totPrice;              //총금액
+             exports.state = orderInfo.state;                    //결제상태('1'==주문접수중 '2'=제조중 '3'=제조완료 '4'=수령완료)
+             exports.brandName = orderInfo.brandName;            //브랜드이름
+             exports.positionName = orderInfo.positionName;      //매장명
 
-             var menu_tmp=[], amount_tmp=[], price_tmp=[], shot_tmp=[], size_tmp=[], date_tmp=[], time_tmp=[], type_tmp=[], state_tmp=[], obj_tmp=[], menu_list_tmp=[], paymentNum_list_tmp=[], totPrice_list_tmp=[], date_tmp_list=[];
+             var obj_orderInfo = item.orderInfo;                 //역대 주문개수구하기(item.orderInfo[n]의 n 구하기)
+             var obj_orderInfo_length = Object.keys(obj_orderInfo).length;
+             exports.obj_orderInfo_length = obj_orderInfo_length;
 
-             for (var q = 0; q < current_obj_length; q++){      // 현재주문의 메뉴개수만큼(item.orderInfo[0].order[n]의 n 구하기)
-                                                                // app.js로 [ 'Cappuccino', 'Coldbrew' ]처럼 배열 형태로 넘어감. 넘길땐 res.render로 'menu' : dynamodb.menu 형태로 넘기고
-                                                                // html에서 끌어 쓸 경우 <%= menu[0]%> <%= menu[1]%> 이런 형태로 가져오면 되지만,
-                                                                // string으로 넘어가기 때문에 "<%= menu["+i+"]%>" 형태로는 for문을 돌릴 수 없음.
-                                                                // for문을 돌리고 싶으면 stript문에서 string으로 넘긴 값을 콤마로 split해서 배열에 넣어 사용해야함.
+             var obj = orderInfo.order;                          //현재주문의 메뉴개수구하기(item.orderInfo[0].order[n]의 n 구하기)
+             var current_obj_length = Object.keys(obj).length;
+             exports.current_obj_length = current_obj_length;
+
+             var menu_tmp=[], amount_tmp=[], price_tmp=[], shot_tmp=[], size_tmp=[], date_tmp=[], time_tmp=[], type_tmp=[], obj_tmp=[], menu_list_tmp=[], paymentNum_list_tmp=[], totPrice_list_tmp=[], date_tmp_list=[];
+
+             for (var q = 0; q < current_obj_length; q++){       // 현재주문의 메뉴개수만큼(item.orderInfo[0].order[n]의 n 만큼)
+                                                                 // app.js로 [ 'Cappuccino', 'Coldbrew' ]처럼 배열 형태로 넘어감.
+                                                                 // app.js에서 각각의 페이지로 넘길땐 res.render로 'menu' : dynamodb.menu 형태로 넘기고
+                                                                 // html에선 <%= menu[0]%> <%= menu[1]%> 이런 형태로 가져와서 찍으면 되지만,
+                                                                 // string으로 넘어가기 때문에 script상에선 "<%= menu["+i+"]%>" 형태로는 for문을 돌릴 수 없음.
+                                                                 // for문을 돌리고 싶으면 stript문에서 string으로 넘긴 값을 콤마로 split해서 배열에 넣어 사용해야함.(payment_complete.html)
                menu_tmp.push(orderInfo.order[q].menu);
                exports.menu = menu_tmp;
-                 
+
                amount_tmp.push(orderInfo.order[q].amount);
                exports.amount = amount_tmp;
 
@@ -101,12 +106,9 @@ module.exports.send = function (i, j){
 
                type_tmp.push(orderInfo.order[q].type);
                exports.type = type_tmp;
-              
-               state_tmp.push(orderInfo.order[q].state);
-               exports.state = state_tmp;
              }
-            
-            for (var t = 0; t<obj_orderInfo_length; t++){        //역대 주문개수만큼 (item.orderInfo[n]의 n)
+
+             for (var t = 0; t<obj_orderInfo_length; t++){        //역대 주문개수만큼 (item.orderInfo[n]의 n) (주로 payment_list.html에서 사용)
                var obj = item.orderInfo[t].order;                 //메뉴개수구하기(item.orderInfo[n].order[m]의 m 구하기)
                var obj_length = Object.keys(obj).length;
                obj_tmp.push(Object.keys(obj).length);
@@ -128,20 +130,20 @@ module.exports.send = function (i, j){
                   //console.log(menu_list_tmp);
                 }
              }
-          });
+           });
       }
   });
-  
-  docClient.query(MerchantTable_params, function(err, data) {
+
+  docClient.query(Twosome_Code_params, function(err, data) {
       if (err) {
-          console.log("[marchanttable] Unable to query. Error:", JSON.stringify(err, null, 2));
+          console.log("[Twosome_Code] Unable to query. Error:", JSON.stringify(err, null, 2));
       } else {
-          console.log("Query succeeded [marchanttable]");
+          console.log("Query succeeded [Twosome_Code]");
           data.Items.forEach(function(item) {
-            exports.location = item.merchantInfo[0].location;           //위치
-            exports.name = item.merchantInfo[0].name;                   //매장명
-            exports.required_time = item.merchantInfo[0].required_time; //소요시간
-            exports.tel = item.merchantInfo[0].tel;                     //매장전화번호
+            exports.placeId = item.placeId;
+            exports.positionName = item.positionName;
+            exports.brandName = item.brandName;
+            exports.requiredTime = item.requiredTime;
           });
       }
   });
