@@ -1,3 +1,5 @@
+<!-- 결제 완료시 화면(결제에서 redirect url로 넘어오는 화면) -->
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -6,45 +8,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
   </head>
+
   <style>
-    h1, h3, h4, h5,h6{
+    h1, h5, h6{
       text-align:center;
     }
     .tab {
-       margin-left: 130px;
+       margin-left: 100px;
      }
   </style>
-  <body>
-      <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
 
+  <body>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
       <div>
         <br>
         <h1>주문이 정상적으로<br><span style="color:green">완료</span>되었습니다.</h1>
         <hr>
           <h5>
-            주문번호 : <%= merchant_uid%>
+            주문번호 : <br><%= merchant_uid%>
             <script>
               function relocate_home(){
-                   location.href = "http://192.168.:3000/payment_list";
+                   location.href = "http://59.6.18.231:3000/payment_list";
               }
             </script>
-            <span class="tab"><button type="button" class="btn btn-sm" onclick=" relocate_home()">구매내역보기</button> <br></span>
-          </h5>
-        <hr>
-        <h5>
+            <br><button type="button" class="btn btn-sm" onclick=" relocate_home()">구매내역보기</button> <br><br><br>
+
             <input type="button" value="주문접수중" id="a" class="btn" onclick="change(this)" style="background-color:whitegray;">
             <input type="button" value="제조중" id="b" class="btn" onclick="change(this)" style="background-color:whitegray;">
             <input type="button" value="제조완료" id="c" class="btn" onclick="change(this)" style="background-color:whitegray;">
             <input type="button" value="수령완료" id="d" class="btn" onclick="change(this)" style="background-color:whitegray;"><br>
 
-
             <script language="JavaScript">
               var state="<%= state%>";  //상태값 끌어와서 상태별 버튼색상 바꿔줌
               //var state="4";
 
-              // 총 4단계로 주문접수중, 제조중, 제조완료, 수령완료를 1,2,3,4로 구분하게 함
               if(state=="1"){
-                document.getElementById("a").click(); //자동클릭으로 구현
+                document.getElementById("a").click(); //클릭
               }else if(state=="2"){
                 document.getElementById("b").click();
               }else if(state=="3"){
@@ -59,8 +58,8 @@
               }
             </script>
 
-            <h6>예상소요시간 : <%= required_time%>분<br>
-            <%= market_name%> <%= market_tel%></h6><hr>
+            <h6><%= brand_name%> <%= market_name%><br>
+              예상소요시간 : <%= required_time%>분</h6><hr>
 
           <div class="container">
             <table class="table table-striped">
@@ -73,10 +72,10 @@
               </thead>
 
               <script type="text/javascript" >
-                var obj_length = "<%= obj_length%>";
+                var current_obj_length = "<%= current_obj_length%>";                 // 주문수 가져오기
 
-                var menu_array = "<%= menu%>";              //app.js에서 string으로 받아와
-                var menu_split = menu_array.split(',');     // ,로 하나하나 나눈다음 menu_split에 저장함 
+                var menu_array = "<%= menu%>";
+                var menu_split = menu_array.split(',');
 
                 var amount_array = "<%= amount%>";
                 var amount_split = amount_array.split(',');
@@ -84,23 +83,22 @@
                 var price_array = "<%= price%>";
                 var price_split = price_array.split(',');
 
-                for(i=0; i<obj_length; i++){
-                  document.write("<tr>");
+                for(i=0; i<current_obj_length; i++){                 // 주문수 만큼
+                  document.write("<tr>");                            // 행 만들고,
                   document.write("<td>"+menu_split[i]+"</td>");
                   document.write("<td>"+amount_split[i]+"</td>");
-                  document.write("<td>"+price_split[i]+"</td>");
+                  document.write("<td>"+price_split[i]+"</td>");     // 메뉴, 수량, 가격 표시
                   document.write("</tr>");
                 }
                 document.write("<tr>");
-                document.write("<td>"+"</td>"+"<td>"+"</td>"+"<td>"+"<%= totPrice%>"+"</td>");
+                document.write("<td>"+"</td>"+"<td>"+"</td>"+"<td>"+"<%= totPrice%>"+"</td>");  // 맨 마지막 행에 총금액 표시
                 document.write("</tr>");
 
               </script>
             </table>
           </div>
         </h5>
-          <br><br>
-        <h5><button type="button" class="btn btn-success btn-lg" >홈화면으로 돌아가기</button><br><br><br></h5>
-      
+        <h5><a href="app://application"><button type="button" class="btn btn-success btn-lg" onclick="app://application">홈화면으로 돌아가기</button></a><br><br><br></h5>
+
   </body>
 </html>
