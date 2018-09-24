@@ -1,7 +1,8 @@
 # Billing_Integration_to_myapp
 ___
 ##최종목표
--`원래목표 :     
+-
+`원래목표 :     
 ` 
 <br>
  aws lex와 엮어서 결제 api를 사용해 결제진행과 결제이후 페이지 구현하기 + 어플에서 웹뷰로 띄우기 
