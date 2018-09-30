@@ -22,14 +22,25 @@ var i="ABC";    							     // 여기서 해도됨 id값으로 dynamodb 쿼리
 var j="T001";		
 
 //DB Query => payment->payment_complete->payment_list
+function errorHandle(process){  //try-catch 함수
+  return function(){
+    try{
+      return process.apply(this, arguments);
+    }catch(e){
+      console.log(e);
+    }
+  };
+}
+
 app.get('/payment',function(req,res){				
 	query.send(i);						     // to dynamodb_query.js
-	setTimeout(function() {	
-		res.render(__dirname+'/public/payment_button.html',{         // payment_button.html로 dynamodb에서 쿼리된 값 넘기기
-			'merchant_uid' : query.paymentNum,
-			'totPrice' : query.totPrice
-		})
-	}, 1000);
+	  setTimeout(errorHandle(function(){
+	    res.render(__dirname+'/public/payment_button.html',{ // to payment_button.html
+	      'merchant_uid' : dynamodb.paymentNum,
+	      'totPrice' : dynamodb.totPrice,
+	      'state' : dynamodb.state
+	    });
+	  }), 2000);
 });
 
 app.get('/payment_complete',function(req,res){				    // 결제가 완료되면 redirect url로 넘어갈 html 
