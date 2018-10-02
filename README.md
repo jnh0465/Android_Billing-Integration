@@ -14,10 +14,12 @@ ___
 - [x] 결제리스트페이지 **_180830**
 - [x] payment->payment_complite->payment_list 과정에서 dynamodb 쿼리는 무조건 한번만 시키기 **_180901**<br>
        (현제코드에서는 진행되지 않지만 렉스에서 해쉬키 받아와서 쿼리진행)
+- [x] android-gps-lex-결제-android를 엮는 와중에서 uuid와 placeid(쿼리하기위한 hash키) 플로우 정리하기 **_180915**
+- [x] ~~어플속 결제내역(payment_list)을 계속 보여주기 위해 nodejs서버에서 어플로 데이터 보내기<br>~~
+
 `진행중 : 
 `   
-- [ ] android-gps-lex-결제-android를 엮는 와중에서 uuid와 placeid(쿼리하기위한 hash키) 플로우 정리하기
-- [ ] 어플속 결제내역(payment_list)을 계속 보여주기 위해 nodejs서버에서 어플로 데이터 보내기<br>
+- [ ] 리스트페이지 - 결제완료페이지 연결해 결제내역페이지 
 
 `애로사항 : `   
 ~~~
