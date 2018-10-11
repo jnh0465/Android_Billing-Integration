@@ -199,10 +199,11 @@ app.get('/payment_list', (req, res) => {		       	  //// 결제리스트
 ___
 `결제완료페이지+리스트페이지`      
 <img src="https://user-images.githubusercontent.com/38582562/45925555-ad44f080-bf52-11e8-8437-f57a4d4a322b.jpg" width="40%"> 
-<img src="https://user-images.githubusercontent.com/38582562/45925556-ad44f080-bf52-11e8-8e76-82fe755aa270.jpg" width="40%"> 
+<img src="https://user-images.githubusercontent.com/38582562/45925556-ad44f080-bf52-11e8-8e76-82fe755aa270.jpg" width="40%"><br>
 ___
 #180910 '홈화면으로 돌아가기'버튼으로 웹에서 메인액티비티 호출하기 
--`<a href="app://application"></a>로 버튼에 연결해 준 다음`
+-
+`<a href="app://application"></a>로 버튼에 연결해 준 다음`
 ~~~node.js
 <a href="app://application"><button type="button" class="btn" onclick="app://application" 
 style="background-color:green;color:white;">홈화면으로 돌아가기</button></a>
@@ -234,3 +235,6 @@ style="background-color:green;color:white;">홈화면으로 돌아가기</button
 `버튼 클릭시 홈액티비티로 이동`      
 <img src="https://user-images.githubusercontent.com/38582562/45925661-c64ea100-bf54-11e8-92e0-d13a3e37e93e.jpg" width="40%"> 
 <img src="https://user-images.githubusercontent.com/38582562/45925662-c64ea100-bf54-11e8-8d57-a518423c88a4.jpg" width="40%"> 
+___
+#181011 리스트페이지 수정
+-
